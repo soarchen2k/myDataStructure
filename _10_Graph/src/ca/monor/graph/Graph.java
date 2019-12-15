@@ -2,22 +2,59 @@ package ca.monor.graph;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 双泛型类，同时包含两个泛型
+ *
  * @param <V> Value
  * @param <E> Weight
  */
 public abstract class Graph<V, E> {
     protected WeightManager<E> weightManager;
 
+    public Graph() {
+    }
+
+    public Graph(WeightManager<E> weightManager) {
+        this.weightManager = weightManager;
+    }
+
+    public abstract int edgesSize();
+
+    public abstract int verticesSize();
+
+    public abstract void addVertex(V v);
+
+    public abstract void addEdge(V from, V to);
+
+    public abstract void addEdge(V from, V to, E weight);
+
+    public abstract void removeVertex(V v);
+
+    public abstract void removeEdge(V from, V to);
+
+    public abstract void bfs(V begin, VertexVisitor<V> visitor);
+
+    public abstract void dfs(V begin, VertexVisitor<V> visitor);
+
+    public abstract Set<EdgeInfo<V, E>> mst();
+
+    public abstract List<V> topologicalSort();
+
+    public abstract Map<V, PathInfo<V, E>> shortestPath(V begin);
+
+    public abstract Map<V, Map<V, PathInfo<V, E>>> shortestPath();
 
     /*
-    接口，WeightManager 维护权重
-     */
+            接口，WeightManager 维护权重
+             */
     public interface WeightManager<E> {
         int compare(E w1, E w2);
+
         E add(E w1, E w2);
+
         E zero();
     }
 
@@ -31,7 +68,8 @@ public abstract class Graph<V, E> {
     public static class PathInfo<V, E> {
         protected E weight;
         protected List<EdgeInfo<V, E>> edgeInfos = new LinkedList<>();
-        public PathInfo(){}
+
+        public PathInfo() { }
 
         public PathInfo(E weight) {
             this.weight = weight;
