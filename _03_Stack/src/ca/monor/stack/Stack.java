@@ -26,12 +26,12 @@ public class Stack<E> implements StackInterface<E> {
 
     @Override
     public E pop() {
-        return list.remove(size() - 1);
+        return list.remove(list.size() - 1);
     }
 
     @Override
     public E top() {
-        return list.get(size() - 1);
+        return list.get(list.size() - 1);
     }
 
     @Override
