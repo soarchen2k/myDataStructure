@@ -12,6 +12,8 @@ package ca.monor.queue;
  * E deQueueFront(); // 从队头出队
  * void enQueueFront(E element); // 从队头入队
  * E deQueueRear(); // 从队尾出队
+ * E front(); // 获取队头元素
+ * E rear(); // 获取队尾元素
  *
  * //		Deque<Integer> queue = new Deque<>();
  * //		queue.enQueueFront(11);
@@ -40,4 +42,14 @@ public interface DequeInterface<E> {
     void enQueueFront(E element); // 从队头入队
 
     E deQueueRear(); // 从队尾出队
+
+    /**
+     * @return 队头元素，不删除该元素
+     */
+    E front();
+
+    /**
+     * @return 队尾元素，不删除该元素
+     */
+    E rear();
 }

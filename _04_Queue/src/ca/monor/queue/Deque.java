@@ -46,6 +46,16 @@ public class Deque<E> implements DequeInterface<E> {
     }
 
     @Override
+    public E front() {
+        return list.get(0);
+    }
+
+    @Override
+    public E rear() {
+        return list.get(size() - 1);
+    }
+
+    @Override
     public String toString() {
         return "Front-> " + list.toString() + " <-Rear";
     }

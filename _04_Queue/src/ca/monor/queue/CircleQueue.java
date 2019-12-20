@@ -63,6 +63,42 @@ public class CircleQueue<E> implements QueueInterface<E> {
         return elements[front];
     }
 
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        string.append("capacity=").append(elements.length)
+                .append(" size=").append(size)
+                .append(" front=").append(front)
+                .append(", [");
+        for (int i = 0; i <  elements.length; i++) {
+            if (i != 0) {
+                string.append(", ");
+            }
+
+            string.append(elements[index(i)]);
+        }
+        string.append("]");
+        return string.toString();
+    }
+
+//    @Override
+//    public String toString() {
+//        StringBuilder string = new StringBuilder();
+//        string.append("capcacity=").append(elements.length)
+//                .append(" size=").append(size)
+//                .append(" front=").append(front)
+//                .append(", [");
+//        for (int i = 0; i < elements.length; i++) {
+//            if (i != 0) {
+//                string.append(", ");
+//            }
+//
+//            string.append(elements[i]);
+//        }
+//        string.append("]");
+//        return string.toString();
+//    }
+
     private void ensureCapacity(int size) {
         // 传入的参数 size 是实际 size，进行判断的时候需要进行 +1 操作
         if (size + 1 <= elements.length) {
