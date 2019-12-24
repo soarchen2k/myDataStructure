@@ -1,6 +1,6 @@
 package ca.monor.binaryTree;
 
-public interface BinaryTreeInfo {
+public interface BinaryTreeInfo<E> {
     /**
      * who is the root node
      */
