@@ -3,7 +3,45 @@ package ca.monor.binaryTree;
 import java.util.Comparator;
 
 /**
- * 直接实现 BinaryTreeInfo 接口来实现一颗 BinarySearchTree
+ * 直接实现 BinaryTreeInfo 接口来实现一棵 BinarySearchTree
+ *
+ * reference:
+ *   int size;  维护树的容量
+ *   Node<E> root; 记录树的根节点
+ *   Comparator<E> comparator; 用于对插入的节点值进行比较
+ *
+ * API 设计：
+ *   public 方法：
+ *     BinarySearchTree(Comparator<E> comparator){}
+ *                                   带有参数比较器的构造方法
+ *     BinarySearchTree(){}          无参构造方法，构造时定义 comparator 为 null
+ *     int size(){};                 返回树的大小
+ *     boolean isEmpty(){};          判断树是否为空
+ *     void clear(){};               清空树的内容
+ *     void add(E element){};        新增一个值为 element 的节点
+ *     void remove(E element){};     移除一个值为 element 的节点
+ *
+ *   private 方法：
+ *     void remove(Node<E> node){};          移除一个给定的节点
+ *     Node<E> successor(Node<E> node){};    查找给定节点的后继结点
+ *     Node<E> node(E element){};            查找值为 element 的节点
+ *     int compare(E e1, E e2){};            比较 e1 和 e2 的大小
+ *     void elementNotNullCheck(E e){};      检查元素是否为空
+ *
+ * 内部类 class:
+ *   private static class Node<E>{}          定义树的节点
+ *
+ *   内部类属性：
+ *     E element;
+ *     Node<E> left;
+ *     Node<E> right;
+ *     Node<E> parent;
+ *
+ *   内部类方法：
+ *     Node(E e, Node<E> node){};        节点的构造方法，node 为新节点的 parent
+ *     boolean isLeaf(){};               判断节点是否为叶结点(无子节点)
+ *     boolean hasTwoChildren(){};       判断节点是否有两个子节点
+ *
  * @param <E>
  */
 
@@ -12,7 +50,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     private Node<E> root;  //树的根节点
     private Comparator<E> comparator;  //用于对插入的节点进行比较
 
-    // 如果用户没有传入 comparator，则不使用任何 comparator
+    // 如果用户没有传入 comparator，则 comparator 为 null
     public BinarySearchTree() {
         this(null);
     }
@@ -97,8 +135,23 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
 
     /**
      * 真正进行 node 删除的方法
+     * 删除原理：1. 当 node 为叶节点时，可以对其直接删除，令其 parent 的子树为空即可
+     *             此时如果 node 的 parent 为空，则说明 node 为 root，并且是唯一节点
+     *             直接赋值 root = null 即可
+     *
+     *         2. 当 node 只有一个子树时，当 node 是其 parent 的左子树时，使其 parent 的
+     *         左子树指向 node 的子树，当 node 是其 parent 的右子树时，使其 parent 的
+     *         右子树指向 node 的子树，也就是断开了 node 与其 parent 以及其子树的连接，
+     *         会被系统回收并删除
+     *             此时如果 node 的 parent 为空，说明 node 为 root，但不是唯一节点，
+     *             此时将 node 的子树重新赋值为 root 即可
+     *
+     *         3. 当 node 同时有左右子树时，用 node 的 predecessor 或者 successor 的值
+     *         来替换 node 的值，并使其 predecessor 或 successor 成为 node，新 node
+     *         一定是叶节点或者度为 1 的节点，按照上面的规则进行删除即可
      *
      * @param node
+     * https://java.monor.ca/fr/2019/12/27/binarysearchtree-%e5%88%a0%e9%99%a4%e8%8a%82%e7%82%b9%e5%88%86%e6%9e%90/
      */
     private void remove(Node<E> node) {
         if (node == null) {
@@ -106,6 +159,39 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         }
         size--;
 
+        if (node.hasTwoChildren()) {  // 情况3，node 同时有左右子树
+            Node<E> successor = successor(node);
+            node.element = successor.element;
+            node = successor;  // 将后继结点的 element 赋值给 node 后，重新定义 node 节点
+        }
+
+        // 定义 replacement 节点，将 replacement 的 parent 指向 node 的 parent，并将 node
+        // 的 parent 指向 replacement，达到回收/删除 node 的目的
+        Node<E> replacement = node.left != null ? node.left : node.right;
+
+        if (replacement != null) {  // node 是度为 1 的节点
+            replacement.parent = node.parent;  // 重新定向 replacement 的 parent 指向
+            if (node.parent == null) {  // 这里开始改变 node 的 parent 的子树指向，
+                // node 的 parent 为空，说明 node 节点是 root，重新定义 root 节点
+                root = replacement;
+            } else if (node == node.parent.left) {
+                node.parent.left = replacement;
+            } else {  // node == node.parent.right
+                node.parent.right = replacement;
+            }
+        } else if (node.parent == null) {
+            // 没有进入第一个 if，说明 replacement == null，即 node 为叶节点，
+            // 此时又因为 node.parent == null，可以判断 node 是唯一根节点，置空
+            root = null;
+        } else {  // replacement == null && node.parent !=null
+                  // node 为叶节点，且不是 root，情况 1，
+                  // 如果 node 是其 parent 的左/右子树，则将其 parent 的左右子树指向空
+            if (node == node.parent.left) {
+                node.parent.left = null;
+            } else {
+                node.parent.right = null;
+            }
+        }
     }
 
     /**
@@ -119,9 +205,11 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      * 情况3：给定的节点没有右子树，即叶节点或只有左子树的节点，
      *       其后继结点在 parent 或 grandParent 中，
      *       3.1 当给定节点是其 parent 的 left 时，其 successor 就是其 parent
-     *       3.2 当给定节点是最右的节点，即中序遍历的最后一个节点，其 parent 会一直
-     *           追溯到 root 节点，因为 root 的 parent 是 null，所以最后节点的
-     *           successor 也是 null
+     *       3.2 当给定节点是右子树的最右节点，即中序遍历的最后一个节点，其 parent
+     *           会一直追溯到 root 节点，因为 root 的 parent 是 null，所以最后
+     *           节点的 successor 也是 null
+     *       3.3 当给定节点是左子树的某右侧叶节点时，其 successor 是其 parent 的
+     *           parent 节点
      *
      * @param node
      * @return
@@ -141,6 +229,36 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
 
 
         while (node.parent != null && node == node.parent.right) {
+            node = node.parent;
+        }
+        return node.parent;
+    }
+
+    /**
+     * 查找给定节点的前驱节点，即中序遍历(inOrder)中的前一个节点，
+     * 在 BinarySearchTree 中，前驱节点是第一个值比当前节点小的节点
+     *
+     * 情况1：如果给出的节点为 null，则直接返回 null
+     * 情况2：如果给定的节点左子树不为空，如果其左子树还有右子树，则节点的 predecessor
+     *       在左子树的最右子树中，如果无右子树，则 predecessor 为 node 的左子树
+     * 情况3：节点的左子树为空，
+     * @param node
+     * @return
+     */
+    private Node<E> predecessor(Node<E> node) {
+        if (node == null) {
+            return null;
+        }
+
+        Node<E> predecessor = node.left;
+        if (predecessor != null) {
+            while (predecessor.right != null) {
+                predecessor = predecessor.right;
+            }
+            return predecessor;
+        }
+
+        while (node.parent != null && node == node.parent.left) {
             node = node.parent;
         }
         return node.parent;
@@ -174,7 +292,8 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     /**
      * 创建 compare 方法，对 elements 进行比较，如果创建的 BST 自带比较器，
      * 就使用其自带的比较器，否则，因为 BST 必须是有序的，如果没有传比较器，
-     * 则强制要求当前比较元素所属的 class 实现 Comparable 接口
+     * 则强制要求当前比较元素所属的 class 实现 Comparable 接口，
+     * 例如本 package 下的 person 类
      * @param element1
      * @param element2
      * @return
