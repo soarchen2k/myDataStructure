@@ -1,6 +1,7 @@
 package ca.monor.binaryTree;
 
 import java.util.Comparator;
+import java.util.Stack;
 
 /**
  * 直接实现 BinaryTreeInfo 接口来实现一棵 BinarySearchTree
@@ -194,6 +195,177 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         }
     }
 
+    public boolean contains(E element) {
+        return node(element) != null;
+    }
+
+    /**
+     * BinarySearchTree 的遍历
+     * 遍历方式：前序遍历 preOrder    ： 先遍历 root 节点，再分别遍历 root 节点的左右子树
+     *         中序遍历 inOrder     ： 先遍历 root 节点的左子树，再遍历 root 节点，最后遍历右子树
+     *         后续遍历 postOrder   ： 先遍历 root 节点的左子树，再遍历右子树，最后遍历 root 节点
+     *         层序遍历 levelOrder  ： root 节点为起点，以从上到下，从左到右的顺序，逐层遍历整棵 BST
+     * 实现方法：递归，迭代
+     */
+
+    /**
+     * BST 的前序遍历，迭代实现
+     * 实现方法：建立一个 stack，如果 node 不为空，则将 node 入栈
+     *         当栈不为空的情况，node 为 stack 弹出的元素，此时 node
+     *         就是我们需要访问的节点，如果 node 有右子树，将右子树入栈，
+     *         如果 node 有左子树，将左子树入栈，while 循环执行
+     * 入栈原则：先入栈右子树，后入栈左子树
+     */
+    public void preOrder(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor.stop) {
+            return;
+        }
+
+        Stack<Node<E>> stack = new Stack<>();
+        stack.push(node);
+
+        while (!stack.isEmpty()) {
+            node = stack.pop();
+            // 此处即为 visitor 对 BST 的访问
+            visitor.stop = visitor.visit(node.element);
+
+            // 如需打印，此处可改为
+            // System.out.println(node.element);
+
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.parent);
+            }
+        }
+    }
+
+    /**
+     * BST 的前序遍历，递归实现
+     */
+    public void preOrder2(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor.stop) {
+            return;
+        }
+        visitor.stop = visitor.visit(node.element);
+        preOrder2(node.left, visitor);
+        preOrder2(node.right, visitor);
+    }
+
+    /**
+     * BST 的中序遍历 inOrder，迭代实现
+     * 实现方法：建立一个 stack，当 node 不为空时，将 node 入栈，以 stack 不为空或
+     *         node 不为空做为循环条件，进行 while 循环，当 node 不为空时，将 node
+     *         入栈，并将 node.left 赋值给 node，直到 node.left 为空，开始弹栈，
+     *         node 被赋值为弹出的节点，并且 visitor 开始访问弹出的节点，之后将
+     *         node.right 入栈，重新进入 while 循环进行下一轮判断，直到栈为空或 node == null
+     */
+    public void inOrder(Node<E> node, Visitor<E> visitor) {
+        if (visitor.stop) {
+            return;
+        }
+
+        Stack<Node<E>> stack = new Stack<>();
+        if (node != null) {
+            while (!stack.isEmpty() || node != null) {
+                if (node != null) {
+                    stack.push(node);
+                    node = node.left;
+                } else {
+                    node = stack.pop();
+                    visitor.stop = visitor.visit(node.element);
+                    node = node.right;
+                }
+            }
+        }
+    }
+
+    /**
+     * BST 的中序遍历 inOrder，递归 recursion
+     */
+    public void inOrder2(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor.stop) {
+            return;
+        }
+        inOrder2(node.left, visitor);
+        visitor.stop = visitor.visit(node.element);
+        inOrder2(node.right, visitor);
+    }
+
+    /**
+     * BST 的后序遍历 postOrder，迭代
+     * 实现方法：创建2个 Stack，利用前序遍历的迭代方式，在遍历点，把被遍历点节点加入
+     *         入栈顺序：先入栈左子树，后入栈右子树
+     *         第二个 Stack，之后依序弹出第二个 Stack 中的节点即可
+     */
+    public void postOrder(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor.stop) {
+            return;
+        }
+
+        Stack<Node<E>> preOrderStack = new Stack<>();
+        Stack<Node<E>> postOrderStack = new Stack<>();
+
+        preOrderStack.push(node);
+        while (!preOrderStack.isEmpty()) {
+            node = preOrderStack.pop();
+            postOrderStack.push(node);
+            if (node.left != null) {
+                preOrderStack.push(node.left);
+            }
+            if (node.right != null) {
+                preOrderStack.push(node.right);
+            }
+        }
+
+        while (!postOrderStack.isEmpty()) {
+            visitor.stop = visitor.visit(postOrderStack.pop().element);
+        }
+    }
+
+    /**
+     * BST 的后续遍历 postOrder，递归实现
+     */
+    public void postOrder2(Node<E> node, Visitor<E> visitor) {
+        if (node == null || visitor.stop) {
+            return;
+        }
+        postOrder2(node.left, visitor);
+        postOrder2(node.right, visitor);
+        visitor.stop = visitor.visit(node.element);
+    }
+
+    /**
+     * BST 的后序遍历 postOrder，非递归实现，第二种方法
+     */
+    public void postOrder3(Node<E> node, Visitor<E> visitor) {
+        if (node != null) {
+            Stack<Node<E>> stack = new Stack<>();
+            stack.push(node);
+            while (!stack.isEmpty()) {
+                Node<E> temp = stack.peek();
+                if (temp.left != null && node != temp.left && node != temp.right) {
+                    stack.push(temp.left);
+                } else if (temp.right != null && node != temp.right) {
+                    stack.push(temp.right);
+                } else {
+                    visitor.visit(stack.pop().element);
+                    node = temp;
+                }
+            }
+        }
+        System.out.println();
+    }
+
+    /**
+     * BST 的层序遍历 levelOrder
+     * 实现方法：
+     */
+    public void levelOrder() {
+
+    }
+
     /**
      * 查找给定的节点的后继结点 successor
      * 后继结点：中序遍历(inOrder)中，某节点之后的节点，
@@ -316,6 +488,13 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         }
     }
 
+    public static abstract class Visitor<E> {
+        // 如果 visitor 返回 true，说明访问到了需要访问的节点，即可停止遍历
+        boolean stop;
+
+        // 抽象方法，访问包含 element 的节点
+        public abstract boolean visit(E element);
+    }
     private static class Node<E>{
         E element;
         Node<E> left;
