@@ -19,5 +19,5 @@ public interface BinaryTreeInfo<E> {
     /**
      * how to print the node
      */
-    Object String(Object node);
+    Object string(Object node);
 }

@@ -1,6 +1,8 @@
 package ca.monor.binaryTree;
 
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -216,16 +218,16 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      *         如果 node 有左子树，将左子树入栈，while 循环执行
      * 入栈原则：先入栈右子树，后入栈左子树
      */
-    public void preOrder(Node<E> node, Visitor<E> visitor) {
-        if (node == null || visitor.stop) {
+    public void preOrder(Visitor<E> visitor) {
+        if (root == null || visitor.stop) {
             return;
         }
 
         Stack<Node<E>> stack = new Stack<>();
-        stack.push(node);
+        stack.push(root);
 
         while (!stack.isEmpty()) {
-            node = stack.pop();
+            Node<E> node = stack.pop();
             // 此处即为 visitor 对 BST 的访问
             visitor.stop = visitor.visit(node.element);
 
@@ -244,7 +246,11 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     /**
      * BST 的前序遍历，递归实现
      */
-    public void preOrder2(Node<E> node, Visitor<E> visitor) {
+    public void preOrder2(Visitor<E> visitor) {
+        preOrder2(root, visitor);
+    }
+
+    private void preOrder2(Node<E> node, Visitor<E> visitor) {
         if (node == null || visitor.stop) {
             return;
         }
@@ -256,12 +262,16 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     /**
      * BST 的中序遍历 inOrder，迭代实现
      * 实现方法：建立一个 stack，当 node 不为空时，将 node 入栈，以 stack 不为空或
-     *         node 不为空做为循环条件，进行 while 循环，当 node 不为空时，将 node
-     *         入栈，并将 node.left 赋值给 node，直到 node.left 为空，开始弹栈，
-     *         node 被赋值为弹出的节点，并且 visitor 开始访问弹出的节点，之后将
-     *         node.right 入栈，重新进入 while 循环进行下一轮判断，直到栈为空或 node == null
+     * node 不为空做为循环条件，进行 while 循环，当 node 不为空时，将 node
+     * 入栈，并将 node.left 赋值给 node，直到 node.left 为空，开始弹栈，
+     * node 被赋值为弹出的节点，并且 visitor 开始访问弹出的节点，之后将
+     * node.right 入栈，重新进入 while 循环进行下一轮判断，直到栈为空或 node == null
      */
-    public void inOrder(Node<E> node, Visitor<E> visitor) {
+    public void inOrder(Visitor<E> visitor) {
+        inOrder(root, visitor);
+    }
+
+    private void inOrder(Node<E> node, Visitor<E> visitor) {
         if (visitor.stop) {
             return;
         }
@@ -284,7 +294,10 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     /**
      * BST 的中序遍历 inOrder，递归 recursion
      */
-    public void inOrder2(Node<E> node, Visitor<E> visitor) {
+    public void inOrder2(Visitor<E> visitor) {
+        inOrder2(root, visitor);
+    }
+    private void inOrder2(Node<E> node, Visitor<E> visitor) {
         if (node == null || visitor.stop) {
             return;
         }
@@ -296,10 +309,15 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     /**
      * BST 的后序遍历 postOrder，迭代
      * 实现方法：创建2个 Stack，利用前序遍历的迭代方式，在遍历点，把被遍历点节点加入
-     *         入栈顺序：先入栈左子树，后入栈右子树
-     *         第二个 Stack，之后依序弹出第二个 Stack 中的节点即可
+     * 入栈顺序：先入栈左子树，后入栈右子树
+     * 第二个 Stack，之后依序弹出第二个 Stack 中的节点即可
      */
-    public void postOrder(Node<E> node, Visitor<E> visitor) {
+
+    public void postOrder(Visitor<E> visitor) {
+        postOrder(root, visitor);
+    }
+
+    private void postOrder(Node<E> node, Visitor<E> visitor) {
         if (node == null || visitor.stop) {
             return;
         }
@@ -327,7 +345,11 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     /**
      * BST 的后续遍历 postOrder，递归实现
      */
-    public void postOrder2(Node<E> node, Visitor<E> visitor) {
+    public void postOrder2(Visitor<E> visitor) {
+        postOrder2(root, visitor);
+    }
+
+    private void postOrder2(Node<E> node, Visitor<E> visitor) {
         if (node == null || visitor.stop) {
             return;
         }
@@ -339,6 +361,9 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     /**
      * BST 的后序遍历 postOrder，非递归实现，第二种方法
      */
+    public void postOrder3(Visitor<E> visitor) {
+        postOrder3(root, visitor);
+    }
     public void postOrder3(Node<E> node, Visitor<E> visitor) {
         if (node != null) {
             Stack<Node<E>> stack = new Stack<>();
@@ -360,10 +385,148 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
 
     /**
      * BST 的层序遍历 levelOrder
-     * 实现方法：
+     * 实现方法：建立一个队列 Queue，先把 root 入队，然后开始 while 循环，当队列不为空
+     *         时，进行出队操作，并将出队的节点赋值为 node，然后开始遍历 node 节点，同
+     *         时检查 node 的左右节点是否为空，不为空则执行入队操作，直到队列为空，遍历
+     *         结束
      */
-    public void levelOrder() {
+    public void levelOrder(Visitor<E> visitor) {
+        if (root == null || visitor.stop) {
+            return;
+        }
 
+        Node<E> node = root;
+        Queue<Node<E>> queue = new LinkedList<>();
+        queue.offer(node);
+        while (!queue.isEmpty()) {
+            node = queue.poll();
+            visitor.stop = visitor.visit(node.element);
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+    }
+
+    /**
+     * 返回 BST 的高度，非递归实现，调用返回某节点的高度的方法，参数: root 节点
+     * @return
+     */
+
+    public int height() {
+        return height(this.root);
+    }
+
+    public int height(E element) {
+        return height(node(element));
+    }
+
+    private int height(Node<E> node) {
+        if (node == null) {
+            return 0;
+        }
+
+        Queue<Node<E>> queue = new LinkedList<>();
+        queue.offer(node);
+        int height = 0;
+        int levelSize = queue.size();
+
+        while (!queue.isEmpty()) {
+            node = queue.poll();
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+            levelSize--;
+            if (levelSize == 0) {
+                height++;
+                levelSize = queue.size();
+            }
+        }
+        return height;
+    }
+
+    /**
+     * BST 的高度，递归实现
+     */
+    public int height2() {
+        return height2(root);
+    }
+
+    private int height2(Node<E> node) {
+        if (node == null) {
+            return 0;
+        }
+        return 1 + Math.max(height2(node.left), height2(node.right));
+    }
+
+    /**
+     * 判断一个 BST 是否是完全二叉树 complete binary tree
+     * 完全二叉树性质：度为 1 的节点最多只有一个，且只有左子树，如果存在度为 1 的节点，
+     *              则其后的节点都是叶节点（度为 0）
+     *              叶节点只会出现在最后两层，最后一层的叶节点都靠左对齐
+     * 实现方法：二叉树的层序遍历，建立一个叶节点开关，默认为 false，当遍历到第一个叶节点时，
+     *         将叶节点都开关置为 true。
+     *         如果节点的度为2，将节点的左右子节点入队
+     *         (if node.hasTwoChildren())
+     *         无论是否进入了叶节点模式，只有存在度为 1，且只有 right 的节点，即返回 false
+     *         (node.left == null && node.right != null)
+     *         进入叶节点模式后，一旦再次遍历到非叶节点，即返回 false
+     *         (leafMode && !node.isLeaf())
+     * @return
+     */
+
+    public boolean isComplete() {
+        if (root == null) {
+            return false;
+        }
+
+        boolean leafMode = false;
+        Queue<Node<E>> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            Node<E> node = queue.poll();
+            if (leafMode && !node.isLeaf()) {
+                // 在 leafMode下，一旦遍历到非叶节点，即判 false
+                return false;
+            }
+
+            if (node.hasTwoChildren()) {  // if (node.left != null && node.right != null)
+                queue.offer(node.left);
+                queue.offer(node.right);
+            } else if (node.left == null && node.right != null) {
+                return false;
+            } else {
+                // 无论 node.left != null，还是 isLeaf()， 都将开启 leafMode
+                leafMode = true;
+                // 如果 node.left 不为空，一定要入队，否则如果该节点不满足条件，就会误判
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+            }
+        }
+        return true;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        toString(root, sb, "");
+        return sb.toString();
+    }
+
+    private void toString(Node<E> node, StringBuilder sb, String prefix) {//中序打印
+        if (node == null) return;
+
+        toString(node.left, sb, prefix + "L---");
+        sb.append(prefix).append(node.element).append("\n");
+        toString(node.right, sb, prefix + "R---");
     }
 
     /**
