@@ -218,7 +218,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      *         如果 node 有左子树，将左子树入栈，while 循环执行
      * 入栈原则：先入栈右子树，后入栈左子树
      */
-    public void preOrder(Visitor<E> visitor) {
+    public void preOrderWithVisitor(Visitor<E> visitor) {
         if (root == null || visitor.stop) {
             return;
         }
@@ -241,6 +241,27 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
                 stack.push(node.parent);
             }
         }
+    }
+
+    public void preOrder() {
+        if (root == null) {
+            return;
+        }
+        System.out.print("Pre Order: ");
+        Stack<Node<E>> stack = new Stack<>();
+        Node<E> node = root;
+        stack.push(node);
+        while (!stack.isEmpty()) {
+            node = stack.pop();
+            System.out.print(node.element + " ");
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+        System.out.println();
     }
 
     /**
@@ -267,8 +288,30 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      * node 被赋值为弹出的节点，并且 visitor 开始访问弹出的节点，之后将
      * node.right 入栈，重新进入 while 循环进行下一轮判断，直到栈为空或 node == null
      */
-    public void inOrder(Visitor<E> visitor) {
+    public void inOrderWithVisitor(Visitor<E> visitor) {
         inOrder(root, visitor);
+    }
+
+    public void inOrder() {
+        if (root == null) {
+            return;
+        }
+        System.out.print("In Order: ");
+        Stack<Node<E>> stack = new Stack<>();
+        Node<E> node = root;
+        if (node != null) {
+            while (!stack.isEmpty() || node != null) {
+                if (node != null) {
+                    stack.push(node);
+                    node = node.left;
+                } else {
+                    node = stack.pop();
+                    System.out.print(node.element + " ");
+                    node = node.right;
+                }
+            }
+        }
+        System.out.println();
     }
 
     private void inOrder(Node<E> node, Visitor<E> visitor) {
@@ -313,8 +356,35 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      * 第二个 Stack，之后依序弹出第二个 Stack 中的节点即可
      */
 
-    public void postOrder(Visitor<E> visitor) {
+    public void postOrderWithVisitor(Visitor<E> visitor) {
         postOrder(root, visitor);
+    }
+
+    public void postOrder() {
+        if (root == null) {
+            return;
+        }
+        System.out.print("Post Order: ");
+        Node<E> node = root;
+        Stack<Node<E>> preOrderStack = new Stack<>();
+        Stack<Node<E>> postOrderStack = new Stack<>();
+
+        preOrderStack.push(node);
+        while (!preOrderStack.isEmpty()) {
+            node = preOrderStack.pop();
+            postOrderStack.push(node);
+            if (node.left != null) {
+                preOrderStack.push(node.left);
+            }
+            if (node.right != null) {
+                preOrderStack.push(node.right);
+            }
+        }
+
+        while (!postOrderStack.isEmpty()) {
+            System.out.print(postOrderStack.pop().element + " ");
+        }
+        System.out.println();
     }
 
     private void postOrder(Node<E> node, Visitor<E> visitor) {
@@ -688,7 +758,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      */
     @Override
     public Object root() {
-        return null;
+        return root;
     }
 
     /**
@@ -698,7 +768,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      */
     @Override
     public Object left(Object node) {
-        return null;
+        return ((Node<E>) node).left;
     }
 
     /**
@@ -708,7 +778,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      */
     @Override
     public Object right(Object node) {
-        return null;
+        return ((Node<E>) node).right;
     }
 
     /**
@@ -717,7 +787,11 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
      * @param node
      */
     @Override
-    public Object String(Object node) {
-        return null;
-    }
+    public Object string(Object node) {
+        Node<E> myNode = (Node<E>)node;
+        String parentString = "null";
+        if (myNode.parent != null) {
+            parentString = myNode.parent.element.toString();
+        }
+        return myNode.element + "_p(" + parentString + ")";    }
 }

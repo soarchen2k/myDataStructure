@@ -46,13 +46,10 @@ public class InorderPrinter extends Printer {
      */
     @Override
     public String printString() {
-        StringBuilder stringBuilder = new
-                StringBuilder(printString(tree.root(),
-                "",
-                "",
-                ""));
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        return stringBuilder.toString();
+        StringBuilder string = new StringBuilder(
+                printString(tree.root(), "", "", ""));
+        string.deleteCharAt(string.length() - 1);
+        return string.toString();
     }
 
     /**

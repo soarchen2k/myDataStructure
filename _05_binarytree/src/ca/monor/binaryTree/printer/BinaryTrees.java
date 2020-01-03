@@ -1,5 +1,4 @@
 package ca.monor.binaryTree.printer;
-
 import ca.monor.binaryTree.BinaryTreeInfo;
 
 public final class BinaryTrees {
@@ -9,7 +8,7 @@ public final class BinaryTrees {
         print(tree, null);
     }
 
-    private static void print(BinaryTreeInfo tree, PrintStyle style) {
+    public static void print(BinaryTreeInfo tree, PrintStyle style) {
         if (tree == null || tree.root() == null) {
             return;
         }

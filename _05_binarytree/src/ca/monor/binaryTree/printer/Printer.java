@@ -21,7 +21,7 @@ public abstract class Printer {
      * 打印
      */
     public void print() {
-        System.out.println(printString());
+        System.out.print(printString());
     }
 
     /**
