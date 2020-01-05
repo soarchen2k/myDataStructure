@@ -202,6 +202,30 @@ public class BinaryTree<E> implements BinaryTreeInfo {
             return false;
         }
 
+        Queue<Node<E>> queue = new LinkedList<>();
+        queue.offer(root);
+        boolean leafFlag = false;
+
+        while (!queue.isEmpty()) {
+            Node<E> node = queue.poll();
+            if (leafFlag && !node.isLeaf()) {
+                return false;
+            }
+
+            if (node.hasTwoChildren()) {
+                queue.offer(node.left);
+                queue.offer(node.right);
+            } else if (node.left == null && node.right != null) {
+                return false;
+            } else {
+                leafFlag = true;
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+            }
+
+        }
+        return true;
     }
 
     protected Node<E> creatNode(E element, Node<E> parent) {
