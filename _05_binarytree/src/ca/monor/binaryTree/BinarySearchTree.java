@@ -138,20 +138,27 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
 
     /**
      * 真正进行 node 删除的方法
-     * 删除原理：1. 当 node 为叶节点时，可以对其直接删除，令其 parent 的子树为空即可
-     *             此时如果 node 的 parent 为空，则说明 node 为 root，并且是唯一节点
-     *             直接赋值 root = null 即可
+     * 删除原理：1. 如果 node 有左右子树，即 node.hasTwoChildren == true
+     *             用 node 的 successor 的值覆盖 node 本身的值，并使其 successor
+     *             成为新的 node，之后删除 node 即可
      *
-     *         2. 当 node 只有一个子树时，当 node 是其 parent 的左子树时，使其 parent 的
-     *         左子树指向 node 的子树，当 node 是其 parent 的右子树时，使其 parent 的
-     *         右子树指向 node 的子树，也就是断开了 node 与其 parent 以及其子树的连接，
-     *         会被系统回收并删除
-     *             此时如果 node 的 parent 为空，说明 node 为 root，但不是唯一节点，
-     *             此时将 node 的子树重新赋值为 root 即可
+     *         2. 定义一个 replacement 结点，如果 node 有左子树，replacement 就是 node
+     *            的左子树，如果没有左子树，replacement 就定义为 node 的右子树
+     *            （如果右子树为空，即 replacement == null）
      *
-     *         3. 当 node 同时有左右子树时，用 node 的 predecessor 或者 successor 的值
-     *         来替换 node 的值，并使其 predecessor 或 successor 成为 node，新 node
-     *         一定是叶节点或者度为 1 的节点，按照上面的规则进行删除即可
+     *            2.1 如果 replacement 不为空，首先将 replacement 的 parent 指向 node
+     *                的 parent，意味着断开了 replacement 与 node 的关系
+     *                2.1.1 如果 node.parent 为空，意味着 node 为 root 节点，由于 replacement
+     *                      的 parent 已经指向 null，只需要把 root 赋值给 replacement，成为新的
+     *                      root 节点，即可断开 node
+     *                2.1.2 否则，根据 node 是其 parent 的左还是右节点，判断 replacement 节点是
+     *                      node 的 parent 的左还是右节点，重新定向
+     *
+     *            2.2 如果 node.parent == null ，即(replacement == null && node.parent == null)
+     *                则说明 node 为 root，并且是唯一节点，直接令 root = null 即可完成删除
+     *
+     *            2.3 如果 replacement == null && node.parent != null 即 else 情况下，
+     *                根据 node 是其 parent 的左右，来确定 replacement 是 node.parent 的左还是右子树
      *
      * @param node
      * https://java.monor.ca/fr/2019/12/27/binarysearchtree-%e5%88%a0%e9%99%a4%e8%8a%82%e7%82%b9%e5%88%86%e6%9e%90/
@@ -169,7 +176,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         }
 
         // 定义 replacement 节点，将 replacement 的 parent 指向 node 的 parent，并将 node
-        // 的 parent 指向 replacement，达到回收/删除 node 的目的
+        // 的 parent 的子节点指向 replacement，达到回收/删除 node 的目的
         Node<E> replacement = node.left != null ? node.left : node.right;
 
         if (replacement != null) {  // node 是度为 1 的节点
@@ -182,7 +189,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
             } else {  // node == node.parent.right
                 node.parent.right = replacement;
             }
-        } else if (node.parent == null) {
+        } else if (node.parent == null) {  // replacement == null && node.parent == null
             // 没有进入第一个 if，说明 replacement == null，即 node 为叶节点，
             // 此时又因为 node.parent == null，可以判断 node 是唯一根节点，置空
             root = null;
@@ -191,7 +198,7 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
                   // 如果 node 是其 parent 的左/右子树，则将其 parent 的左右子树指向空
             if (node == node.parent.left) {
                 node.parent.left = null;
-            } else {
+            } else {  // node == node.parent.right
                 node.parent.right = null;
             }
         }

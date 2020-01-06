@@ -291,7 +291,7 @@ public class BinaryTree<E> implements BinaryTreeInfo {
         return node;
     }
 
-    private class Node<E> {
+    protected static class Node<E> {
         E element;
         Node<E> parent;
         Node<E> left;
@@ -318,17 +318,6 @@ public class BinaryTree<E> implements BinaryTreeInfo {
             return parent != null && this == parent.right;
         }
 
-        public abstract class Visitor<E>{
-            boolean stop;
-
-            /**
-             * 如果返回 true，就表示停止遍历
-             * @param element
-             * @return
-             */
-            abstract boolean visit(E element);
-        }
-
         /**
          * 返回节点的兄弟节点
          * @return
@@ -342,5 +331,16 @@ public class BinaryTree<E> implements BinaryTreeInfo {
             }
             return null;
         }
+    }
+
+    public static abstract class Visitor<E>{
+        boolean stop;
+
+        /**
+         * 如果返回 true，就表示停止遍历
+         * @param element
+         * @return
+         */
+        abstract boolean visit(E element);
     }
 }
