@@ -92,9 +92,10 @@ public class BST<E> extends BinaryTree<E> {
 
     /**
      * 添加node之后的调整
+     *
      * @param node 新添加的节点
      */
-    protected void afterAdd(Node<E> node) {    }
+    protected void afterAdd(Node<E> node) { }
 
     /**
      * 删除node之后的调整
