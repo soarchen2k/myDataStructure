@@ -22,8 +22,8 @@ public class BST<E> extends BinaryTree<E> {
             afterAdd(root);
             return;
         }
-        Node<E> parent = root;
         Node<E> node = root;
+        Node<E> parent = node;
         int compareResult = 0;
         do {
             compareResult = compare(element, node.element);
@@ -38,6 +38,8 @@ public class BST<E> extends BinaryTree<E> {
             }
         } while (node != null);
 
+        // 使用 createNode 方法，而不是直接创建新 node，因爲在 AVLTree class 中
+        // override 了 create 方法，子类重写了该方法，则调用子类的方法，创建新的 AVLNode
         Node<E> newNode = creatNode(element, parent);
         if (compareResult > 0) {
             parent.right = newNode;
