@@ -1,10 +1,11 @@
 package ca.monor.binaryTree;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class BST {
     private treeNode root;
-
-    public BST() {
-        this.root = null;    }
+    public BST() { }
 
     public void arrayToTree(int[][] arr) {
         for (int i = 0; i < arr.length; i++) {
@@ -19,7 +20,7 @@ public class BST {
             root = new treeNode(val, null);
             return;
         }
-        treeNode parent = root;
+        treeNode parent;
         treeNode node = root;
 
         do {
@@ -54,9 +55,28 @@ public class BST {
         }
     }
 
+    public void levelTravel() {
+        Queue<treeNode> queue = new LinkedList<>();
+        if (root != null) {
+            queue.offer(root);
+        }
+        while (!queue.isEmpty()) {
+            treeNode node = queue.poll();
+            System.out.println(node.value);
+
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         BST binarySearchTree = new BST();
         int[][] arr = {{52, 657, 7659, 6754}, {32, 25, 13, 27}, {32, 54, 2433, 6756, 2133, 656}};
         binarySearchTree.arrayToTree(arr);
+        binarySearchTree.levelTravel();
     }
 }
