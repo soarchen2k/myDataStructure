@@ -26,7 +26,7 @@ public class _349_Intersection {
         Iterator<Integer> iterator1 = set1.iterator();
         Iterator<Integer> iterator2 = set2.iterator();
         while (iterator1.hasNext() && iterator2.hasNext()) {
-            if (iterator1.next() == iterator2.next()) {
+            if (iterator1.next().equals(iterator2.next())) {
                 list.add(iterator1.next());
             }
         }
@@ -37,6 +37,4 @@ public class _349_Intersection {
         }
         return res;
     }
-
-
 }
