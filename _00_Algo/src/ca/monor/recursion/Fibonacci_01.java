@@ -5,7 +5,7 @@ public class Fibonacci_01 {
     public static void main(String[] args) {
 //        testFib(55);
 //        System.out.println(sum(100));
-        System.out.println(fib3(80));
+        System.out.println(fib4(80));
     }
 
     private static void testFib(int n) {
@@ -56,6 +56,18 @@ public class Fibonacci_01 {
             arr[i % 2] = arr[(i - 1) % 2] + arr[(i - 2) % 2];
         }
         return arr[(int) (n % 2)];
+    }
+
+    // 斐波那契数列计算的再次优化，使用滚动数组，并使用位于操作符「&」来代替模运算「%」
+    private static long fib4(long n) {
+        if (n <= 1) return n;
+        long[] arr = new long[2];
+        arr[0] = arr[1] = 1;
+        for (int i = 3; i <= n; i++) {
+            arr[i & 1] = arr[(i - 1) & 1] + arr[(i - 2) & 1];
+        }
+        // 最后的 i 值是 n，所以返回 n 值时，数组的值
+        return arr[(int) (n & 1)];
     }
 
     // 通过递归计算 n 个数的相加
