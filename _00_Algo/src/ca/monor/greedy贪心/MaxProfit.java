@@ -46,6 +46,7 @@ public class MaxProfit {
             }
             myMoney += maxProfilePriorityQueue.poll().profit;
         }
+        int a = 10;
         return myMoney;
     }
 
