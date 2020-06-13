@@ -1,7 +1,7 @@
 package ca.monor.list;
 
 /**
- * 抽象类实现接口，不需要实习接口中的抽象方法，而是需要由继承该类的子类来实现
+ * 抽象类实现接口，不需要实现接口中的抽象方法，而是需要由继承该类的子类来实现
  * 创建抽象类 List，把 ArrayList 和 LinkedList 可以共有的方法抽出来做爲公共父类
  * 创建 ArrayList 和 LinkedList 时只需要继承本类即可
  * @param <E>
