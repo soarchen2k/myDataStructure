@@ -1,6 +1,7 @@
 package ca.monor.leetCode.stack.scoreOfParentheses;
 
-import ca.monor.stack栈.Stack;
+
+import java.util.Stack;
 
 /**
  * 856. 括号的分数

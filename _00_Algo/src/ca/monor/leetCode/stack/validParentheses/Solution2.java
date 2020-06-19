@@ -1,6 +1,7 @@
 package ca.monor.leetCode.stack.validParentheses;
 
-import ca.monor.stack栈.Stack;
+
+import java.util.Stack;
 
 public class Solution2 {
     public boolean isValid(String s) {

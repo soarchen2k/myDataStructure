@@ -5,9 +5,8 @@ package ca.monor.leetCode.stack.validParentheses;
  * https://leetcode-cn.com/problems/valid-parentheses/solution/
  */
 
-import ca.monor.stack栈.Stack;
-
 import java.util.Scanner;
+import java.util.Stack;
 
 public class ValidParentheses {
     private Stack<Character> leftParentheses;

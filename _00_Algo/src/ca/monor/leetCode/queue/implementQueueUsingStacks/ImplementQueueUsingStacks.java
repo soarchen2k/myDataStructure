@@ -1,7 +1,7 @@
 package ca.monor.leetCode.queue.implementQueueUsingStacks;
 
 
-import ca.monor.stack栈.Stack;
+import java.util.Stack;
 
 /**
  * 232. Implement Queue using Stacks
