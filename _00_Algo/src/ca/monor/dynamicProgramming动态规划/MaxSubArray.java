@@ -29,9 +29,7 @@ public class MaxSubArray {
      */
     private static int maxSubArray(int[] nums) {
         // 数组长度为 0 时，返回 0
-        if (nums.length == 0) {
-            return 0;
-        }
+        if (nums == null || nums.length == 0) return 0;
 
         int max = Integer.MIN_VALUE;  // 设置最大和的初始值为 Integer 的最小值
         for (int begin = 0; begin < nums.length; begin++) {  // 从数组第一个元素开始遍历
@@ -45,16 +43,21 @@ public class MaxSubArray {
         return max;
     }
 
+    /**
+     * 动态规划方法1
+     * @param nums
+     * @return
+     */
     private static int maxSubArray0(int[] nums) {
         if(nums == null || nums.length == 0) return 0;
 
         int maxSum = Integer.MIN_VALUE;
-        int sum = 0;
+        int sum = 0;  // 设定初始 sum 值为 0
 
         for (int num : nums) {
-            sum += num;
-            maxSum = Math.max(sum, maxSum);
-            if (sum < 0) sum = 0;
+            sum += num;  // 将 sum 与数组元素进行累加，并进行记录
+            maxSum = Math.max(sum, maxSum);  // 记录最大的累加和
+            if (sum < 0) sum = 0;  // 如果累加和出现负数，则进行舍弃，置 0，如果不为负数，则带入下一轮求和
         }
         return maxSum;
     }
@@ -102,7 +105,7 @@ public class MaxSubArray {
     }
 
     public static void main(String[] args) {
-        int[] nums = {-2,1};
-        System.out.println(maxSubArray0(nums));
+        int[] nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+        System.out.println(maxSubArray2(nums));
     }
 }
