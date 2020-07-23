@@ -1,4 +1,4 @@
-package 练习;
+package ca.monor.leetCode.test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
