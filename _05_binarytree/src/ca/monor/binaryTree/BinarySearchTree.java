@@ -321,6 +321,35 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         System.out.println();
     }
 
+    public void morrisInOrder() {
+        if (root == null) {
+            return;
+        }
+
+        Node<E> current = root;
+        Node<E> mostRight;
+        System.out.print("Morris travel: ");
+        while (current != null) {
+            System.out.print(current.element + " ");
+
+            if (current.left == null) {
+                current = current.right;
+            } else {
+                mostRight = current.left;
+                while (mostRight.right != null && mostRight.right != current) {
+                    mostRight = mostRight.right;
+                }
+                if (mostRight.right == null) {
+                    mostRight.right = current;
+                    current = current.left;
+                } else {
+                    mostRight.right = null;
+                    current = current.right;
+                }
+            }
+        }
+    }
+
     private void inOrder(Node<E> node, Visitor<E> visitor) {
         if (visitor.stop) {
             return;

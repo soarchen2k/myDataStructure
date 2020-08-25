@@ -73,7 +73,21 @@ public class Main {
         BinaryTrees.println(creatBST(length));
     }
 
+    static void testMorris() {
+        BinarySearchTree<Integer> binarySearchTree = new BinarySearchTree<>();
+        binarySearchTree.add(6);
+        binarySearchTree.add(2);
+        binarySearchTree.add(1);
+        binarySearchTree.add(3);
+        binarySearchTree.add(5);
+        binarySearchTree.add(4);
+        binarySearchTree.add(7);
+        BinaryTrees.println(binarySearchTree);
+        binarySearchTree.morrisInOrder();
+    }
+
     public static void main(String[] args) {
-        test1(8);
+//        test1(8);
+        testMorris();
     }
 }
