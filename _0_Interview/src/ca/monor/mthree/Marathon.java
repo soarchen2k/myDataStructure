@@ -27,10 +27,10 @@ public class Marathon {
         }
 
         String bestOne = "23:59:59";
-        for (int i = 0; i < times.length; i++) {
+        for (String time : times) {
             try {
-                if (compare(times[i], bestOne)) {
-                    bestOne = times[i];
+                if (compare(time, bestOne)) {
+                    bestOne = time;
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -43,10 +43,6 @@ public class Marathon {
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
         Date a = sdf.parse(time1);
         Date b = sdf.parse(time2);
-        if (a.before(b)) {
-            return true;
-        } else {
-            return false;
-        }
+        return a.before(b);
     }
 }
